@@ -30,6 +30,27 @@
     return cat === "sneakers" ? "eu" : cat === "apparel" ? "apparel" : "one";
   }
 
+  // внутренний артикул: SI-<КАТЕГОРИЯ>-<номер>, сквозной по каталогу
+  const CAT_SKU = {
+    sneakers: "SNK",
+    apparel: "APP",
+    accessories: "ACC",
+    eyewear: "EYE",
+    collectibles: "COL",
+  };
+  function nextSku(cat) {
+    const prefix = "SI-" + (CAT_SKU[cat] || "GEN") + "-";
+    let max = 0;
+    store.getProducts().forEach((p) => {
+      const code = p.sku || "";
+      if (code.indexOf(prefix) === 0) {
+        const num = parseInt(code.slice(prefix.length), 10);
+        if (!isNaN(num)) max = Math.max(max, num);
+      }
+    });
+    return prefix + String(max + 1).padStart(4, "0");
+  }
+
   /* ---------- отрисовка списка ---------- */
   function render() {
     const all = store.getProducts();
@@ -127,6 +148,9 @@
     document.getElementById("f_model").value = p ? p.model : "";
     document.getElementById("f_name").value = p ? p.name : "";
     document.getElementById("f_sku").value = p ? p.sku || "" : "";
+    document.getElementById("f_sku").placeholder = p
+      ? "DH7695-100"
+      : nextSku(document.getElementById("f_cat").value);
     document.getElementById("f_colorway").value = p ? p.colorway || "" : "";
     curImg = p ? p.img : "";
     curSizes = p ? (p.sizes || []).map(String) : CAT_DEFAULT_SIZES[p ? p.cat : "sneakers"].slice();
@@ -207,6 +231,9 @@
   });
   document.getElementById("f_cat").addEventListener("change", (e) => {
     paintSizeKind();
+    if (!document.getElementById("f_id").value) {
+      document.getElementById("f_sku").placeholder = nextSku(e.target.value);
+    }
     if (!document.getElementById("f_sizes").value.trim()) {
       curSizes = CAT_DEFAULT_SIZES[e.target.value].slice();
       document.getElementById("f_sizes").value = curSizes.join(", ");
@@ -262,7 +289,7 @@
       brand: document.getElementById("f_brand").value.trim() || "—",
       model: document.getElementById("f_model").value.trim() || "",
       name,
-      sku: document.getElementById("f_sku").value.trim() || "—",
+      sku: document.getElementById("f_sku").value.trim() || nextSku(cat),
       colorway: document.getElementById("f_colorway").value.trim() || "",
       badge,
       img: curImg,
