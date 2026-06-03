@@ -14,12 +14,31 @@
     <link rel="stylesheet" href="assets/css/admin.css" />
   </head>
   <body>
+    <div class="adm-gate" id="loginGate">
+      <div class="adm-gate__card">
+        <img class="adm-gate__logo" src="assets/img/logo-wordmark.png" alt="Sneaker Interaction" />
+        <h1>Вход модератора</h1>
+        <p>Войдите, чтобы редактировать каталог. Доступ выдаёт владелец.</p>
+        <form id="loginForm">
+          <label for="loginEmail">E-mail</label>
+          <input type="email" id="loginEmail" autocomplete="username" required />
+          <label for="loginPass">Пароль</label>
+          <input type="password" id="loginPass" autocomplete="current-password" required />
+          <p class="adm-gate__err" id="loginErr"></p>
+          <button type="submit" class="adm-btn adm-btn--primary">Войти</button>
+        </form>
+        <p class="adm-gate__hint">
+          Нет доступа? Попросите владельца завести вам логин в панели Supabase.
+        </p>
+      </div>
+    </div>
     <header class="adm-top">
       <div class="adm-top__in">
         <img src="assets/img/logo-wordmark-white.png" alt="Sneaker Interaction" />
         <span class="tag">Админ-панель</span>
         <div class="adm-top__sp"></div>
         <a class="view" href="catalog.html" target="_blank" id="viewSite">Открыть витрину ↗</a>
+        <a class="logout" id="logoutBtn" style="display: none">Выйти</a>
       </div>
     </header>
 
@@ -33,6 +52,9 @@
           <button class="adm-btn" id="exportBtn">Экспорт</button>
           <button class="adm-btn" id="importBtn">Импорт</button>
           <button class="adm-btn" id="resetBtn">Сбросить</button>
+          <button class="adm-btn" id="seedBtn" style="display: none">
+            Залить каталог в облако
+          </button>
           <button class="adm-btn adm-btn--primary" id="addBtn">
             <span id="addIc"></span> Добавить товар
           </button>
@@ -210,6 +232,8 @@
     </div>
 
     <script src="assets/js/data.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="assets/js/config.js"></script>
     <script src="assets/js/store.js"></script>
     <script src="assets/js/common.js"></script>
     <script src="assets/js/admin.js"></script>

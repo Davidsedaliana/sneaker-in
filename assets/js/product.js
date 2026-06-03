@@ -1,20 +1,22 @@
-const P = window.SI_products(),
-  icon = window.SI_icon;
-document.getElementById("navSearch").innerHTML = icon("search");
-document.getElementById("navBurger").innerHTML = icon("menu");
-document.getElementById("scClose").innerHTML = icon("close");
-document.getElementById("tgFoot").href = SI_TG;
+/* Дожидаемся загрузки каталога (из облака или data.js), затем рендерим. */
+window.SI_store.ready().then(function () {
+  const P = window.SI_products(),
+    icon = window.SI_icon;
+  document.getElementById("navSearch").innerHTML = icon("search");
+  document.getElementById("navBurger").innerHTML = icon("menu");
+  document.getElementById("scClose").innerHTML = icon("close");
+  document.getElementById("tgFoot").href = SI_TG;
 
-const id = new URLSearchParams(location.search).get("id") || P[0].id;
-const p = P.find((x) => x.id === id) || P[0];
-let selSize = null,
-  mainIdx = 0;
+  const id = new URLSearchParams(location.search).get("id") || P[0].id;
+  const p = P.find((x) => x.id === id) || P[0];
+  let selSize = null,
+    mainIdx = 0;
 
-document.title = `${p.name} — Sneaker Interaction`;
+  document.title = `${p.name} — Sneaker Interaction`;
 
-const galleryThumbs = p.gallery.length > 1 ? p.gallery : [p.img];
+  const galleryThumbs = p.gallery.length > 1 ? p.gallery : [p.img];
 
-document.getElementById("app").innerHTML = `
+  document.getElementById("app").innerHTML = `
   <div class="crumb"><a href="index.html">Главная</a> / <a href="catalog.html?cat=${p.cat}">${(window.SI_CATS[p.cat] || {}).label || p.brand}</a> / ${p.name}</div>
   <div class="pd">
     <div class="gallery">
@@ -108,69 +110,70 @@ document.getElementById("app").innerHTML = `
   </section>
 `;
 
-document.getElementById("tgIc").innerHTML = icon("tg");
-document.getElementById("arrIc").innerHTML = icon("arrow");
+  document.getElementById("tgIc").innerHTML = icon("tg");
+  document.getElementById("arrIc").innerHTML = icon("arrow");
 
-/* gallery */
-document.getElementById("thumbs").addEventListener("click", (e) => {
-  const t = e.target.closest(".thumb");
-  if (!t) return;
-  mainIdx = +t.dataset.i;
-  document.getElementById("mainImg").src = galleryThumbs[mainIdx];
-  document.querySelectorAll(".thumb").forEach((x) => x.setAttribute("aria-pressed", x === t));
-});
-
-/* sizes */
-const grid = document.getElementById("sizeGrid");
-if (grid)
-  grid.addEventListener("click", (e) => {
-    const b = e.target.closest(".sz");
-    if (!b || b.disabled) return;
-    selSize = b.dataset.sz;
-    document
-      .querySelectorAll("#sizeGrid .sz")
-      .forEach((x) => x.setAttribute("aria-pressed", x === b));
-    updateLinks();
+  /* gallery */
+  document.getElementById("thumbs").addEventListener("click", (e) => {
+    const t = e.target.closest(".thumb");
+    if (!t) return;
+    mainIdx = +t.dataset.i;
+    document.getElementById("mainImg").src = galleryThumbs[mainIdx];
+    document.querySelectorAll(".thumb").forEach((x) => x.setAttribute("aria-pressed", x === t));
   });
-function updateLinks() {
-  document.getElementById("orderTG").href = SI_orderLink(p, selSize);
-}
-updateLinks();
 
-/* order guard */
-function guard(e) {
-  if (p.sizeType !== "one" && !selSize) {
-    e.preventDefault();
-    SI_toast("Выберите размер");
-    document.querySelector(".size-head")?.scrollIntoView({ block: "center" });
-    return false;
+  /* sizes */
+  const grid = document.getElementById("sizeGrid");
+  if (grid)
+    grid.addEventListener("click", (e) => {
+      const b = e.target.closest(".sz");
+      if (!b || b.disabled) return;
+      selSize = b.dataset.sz;
+      document
+        .querySelectorAll("#sizeGrid .sz")
+        .forEach((x) => x.setAttribute("aria-pressed", x === b));
+      updateLinks();
+    });
+  function updateLinks() {
+    document.getElementById("orderTG").href = SI_orderLink(p, selSize);
   }
-  return true;
-}
-document.getElementById("orderTG").addEventListener("click", guard);
+  updateLinks();
 
-/* size chart modal (sneakers only) */
-const modal = document.getElementById("scModal");
-function openSC() {
-  modal.classList.add("open");
-}
-function closeSC() {
-  modal.classList.remove("open");
-}
-document.getElementById("openSC")?.addEventListener("click", openSC);
-document.getElementById("scLink")?.addEventListener("click", (e) => {
-  e.preventDefault();
-  openSC();
+  /* order guard */
+  function guard(e) {
+    if (p.sizeType !== "one" && !selSize) {
+      e.preventDefault();
+      SI_toast("Выберите размер");
+      document.querySelector(".size-head")?.scrollIntoView({ block: "center" });
+      return false;
+    }
+    return true;
+  }
+  document.getElementById("orderTG").addEventListener("click", guard);
+
+  /* size chart modal (sneakers only) */
+  const modal = document.getElementById("scModal");
+  function openSC() {
+    modal.classList.add("open");
+  }
+  function closeSC() {
+    modal.classList.remove("open");
+  }
+  document.getElementById("openSC")?.addEventListener("click", openSC);
+  document.getElementById("scLink")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    openSC();
+  });
+  modal.querySelectorAll("[data-close]").forEach((b) => b.addEventListener("click", closeSC));
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeSC();
+  });
+
+  /* related — same category first */
+  const rel = P.filter((x) => x.id !== p.id && x.cat === p.cat).slice(0, 4);
+  const fill = P.filter((x) => x.id !== p.id && !rel.includes(x));
+  while (rel.length < 4 && fill.length) rel.push(fill.shift());
+  document.getElementById("related").innerHTML = rel.map(SI_card).join("");
+
+  /* (search + mobile menu handled globally by site.js) */
 });
-modal.querySelectorAll("[data-close]").forEach((b) => b.addEventListener("click", closeSC));
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") closeSC();
-});
-
-/* related — same category first */
-const rel = P.filter((x) => x.id !== p.id && x.cat === p.cat).slice(0, 4);
-const fill = P.filter((x) => x.id !== p.id && !rel.includes(x));
-while (rel.length < 4 && fill.length) rel.push(fill.shift());
-document.getElementById("related").innerHTML = rel.map(SI_card).join("");
-
-/* (search + mobile menu handled globally by site.js) */

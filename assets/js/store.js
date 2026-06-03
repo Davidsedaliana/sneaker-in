@@ -1,16 +1,43 @@
 /* ============================================================
-   SNEAKER INTERACTION — data store
-   Single source of truth for products. Seeds from data.js
-   defaults into localStorage; admin panel reads/writes here.
+   SNEAKER INTERACTION — хранилище каталога
+   ------------------------------------------------------------
+   Единый источник товаров для витрины и админки.
+
+   Два режима, переключаются автоматически:
+   • Облако (Supabase) — если в config.js заданы реальные ключи.
+     Каталог общий для всех, правки модератора видны сразу.
+   • Локальный фолбэк — если ключей нет. Каталог берётся из
+     data.js и хранится в localStorage этого браузера.
+
+   Большинство методов асинхронные (возвращают Promise), потому
+   что в облачном режиме ходят в сеть. Перед первым рендером
+   страницы вызывайте SI_store.ready().
    ============================================================ */
 (function () {
   const KEY = "si_products_v3";
+  const cfg = window.SI_CONFIG || {};
+
+  // облако активно только при заданных и непустых (не плейсхолдерных) ключах
+  const hasKeys =
+    !!cfg.SUPABASE_URL &&
+    !!cfg.SUPABASE_ANON_KEY &&
+    !/YOUR-|REPLACE/i.test(cfg.SUPABASE_URL + cfg.SUPABASE_ANON_KEY);
+  const sdkReady = !!(window.supabase && typeof window.supabase.createClient === "function");
+  const CLOUD = hasKeys && sdkReady;
+
+  let client = null;
+  if (CLOUD) {
+    client = window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY);
+  } else if (hasKeys && !sdkReady) {
+    console.warn("SI_store: ключи Supabase заданы, но SDK не загрузился — работаю локально.");
+  }
 
   function defaults() {
     return JSON.parse(JSON.stringify(window.SI_PRODUCTS || []));
   }
 
-  function load() {
+  /* ---------- локальный режим ---------- */
+  function loadLocal() {
     try {
       const raw = localStorage.getItem(KEY);
       if (raw) {
@@ -20,21 +47,21 @@
     } catch (e) {}
     return defaults();
   }
-
-  let cache = load();
-
-  function persist() {
+  function persistLocal() {
     try {
       localStorage.setItem(KEY, JSON.stringify(cache));
       return true;
     } catch (e) {
-      console.warn("SI_store: localStorage full", e);
+      console.warn("SI_store: localStorage переполнен", e);
       alert(
         "Не удалось сохранить — память браузера переполнена. Уменьшите число фото или их размер.",
       );
       return false;
     }
   }
+
+  let cache = CLOUD ? [] : loadLocal();
+  let readyPromise = null;
 
   function makeId(name) {
     const base =
@@ -52,7 +79,38 @@
     return id;
   }
 
+  /* ---------- облачный режим ---------- */
+  async function loadCloud() {
+    try {
+      const { data, error } = await client.from("products").select("id,data").order("id");
+      if (error) throw error;
+      const rows = (data || []).map((r) => r.data).filter(Boolean);
+      // пока облако пустое — показываем стартовый каталог из data.js
+      cache = rows.length ? rows : defaults();
+    } catch (e) {
+      console.warn("SI_store: не удалось загрузить каталог из облака, использую data.js", e);
+      cache = defaults();
+    }
+    return cache;
+  }
+
   const Store = {
+    cloud: CLOUD,
+
+    /* дождаться загрузки каталога (вызывать до первого рендера) */
+    ready() {
+      if (!readyPromise) {
+        readyPromise = CLOUD ? loadCloud() : Promise.resolve(cache);
+      }
+      return readyPromise;
+    },
+
+    /* перечитать каталог из облака */
+    async refresh() {
+      if (CLOUD) await loadCloud();
+      return cache.slice();
+    },
+
     getProducts() {
       return cache.slice();
     },
@@ -63,35 +121,49 @@
       return cache.find((p) => p.id === id) || null;
     },
 
-    /* create or update. New product (no id) gets a generated id. */
-    save(prod) {
-      if (!prod.id) {
-        prod.id = makeId(prod.name);
+    /* создать или обновить товар */
+    async save(prod) {
+      if (!prod.id) prod.id = makeId(prod.name);
+      if (CLOUD) {
+        const { error } = await client.from("products").upsert({ id: prod.id, data: prod });
+        if (error) throw error;
       }
       const i = cache.findIndex((p) => p.id === prod.id);
       if (i >= 0) cache[i] = prod;
       else cache.unshift(prod);
-      persist();
+      if (!CLOUD) persistLocal();
       return prod.id;
     },
     upsert(prod) {
       return this.save(prod);
     },
 
-    remove(id) {
+    async remove(id) {
+      if (CLOUD) {
+        const { error } = await client.from("products").delete().eq("id", id);
+        if (error) throw error;
+      }
       cache = cache.filter((p) => p.id !== id);
-      return persist();
+      if (!CLOUD) persistLocal();
+      return true;
     },
 
-    reset() {
-      cache = defaults();
-      try {
-        localStorage.removeItem(KEY);
-      } catch (e) {}
+    /* вернуть исходный каталог из data.js
+       (в облаке — только перечитать, облако не трогаем) */
+    async reset() {
+      if (CLOUD) {
+        await loadCloud();
+      } else {
+        cache = defaults();
+        try {
+          localStorage.removeItem(KEY);
+        } catch (e) {}
+      }
       return true;
     },
 
     isCustomized() {
+      if (CLOUD) return true;
       try {
         return !!localStorage.getItem(KEY);
       } catch (e) {
@@ -102,13 +174,49 @@
     exportJSON() {
       return JSON.stringify(cache, null, 2);
     },
-    importJSON(json) {
+    async importJSON(json) {
       const arr = typeof json === "string" ? JSON.parse(json) : json;
       if (!Array.isArray(arr)) throw new Error("Ожидался массив товаров");
       if (!arr.length) throw new Error("Пустой каталог");
-      cache = arr;
-      persist();
+      if (CLOUD) {
+        const rows = arr.map((p) => ({ id: p.id || makeId(p.name), data: p }));
+        const { error } = await client.from("products").upsert(rows);
+        if (error) throw error;
+        await loadCloud();
+      } else {
+        cache = arr;
+        persistLocal();
+      }
       return true;
+    },
+
+    /* первичная заливка стартового каталога (54 товара) в облако */
+    async seedCloud() {
+      if (!CLOUD) throw new Error("Облако не настроено");
+      const rows = defaults().map((p) => ({ id: p.id, data: p }));
+      const { error } = await client.from("products").upsert(rows);
+      if (error) throw error;
+      await loadCloud();
+      return cache.length;
+    },
+
+    /* ---------- аутентификация модератора ---------- */
+    auth: {
+      enabled: CLOUD,
+      async signIn(email, password) {
+        if (!CLOUD) throw new Error("Облако не настроено");
+        const { data, error } = await client.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        return data.user;
+      },
+      async signOut() {
+        if (CLOUD) await client.auth.signOut();
+      },
+      async user() {
+        if (!CLOUD) return null;
+        const { data } = await client.auth.getUser();
+        return data ? data.user : null;
+      },
     },
 
     makeId,

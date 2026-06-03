@@ -491,3 +491,95 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+/* ============================================================
+   ЭКРАН ВХОДА МОДЕРАТОРА (облачный режим)
+   ============================================================ */
+.adm-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: none; /* включается из admin.js при облачном режиме без сессии */
+  align-items: center;
+  justify-content: center;
+  background: var(--paper-2);
+  padding: 24px;
+}
+.adm-gate__card {
+  width: min(380px, 100%);
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  padding: 32px;
+}
+.adm-gate__logo {
+  height: 24px;
+  width: auto;
+  display: block;
+  margin-bottom: 26px;
+}
+.adm-gate h1 {
+  font-family: var(--head);
+  font-weight: 400;
+  text-transform: uppercase;
+  font-size: 22px;
+  letter-spacing: -0.01em;
+  margin: 0 0 6px;
+}
+.adm-gate p {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--gray-1);
+  line-height: 1.5;
+  margin: 0 0 22px;
+}
+.adm-gate label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gray-1);
+  display: block;
+  margin-bottom: 7px;
+}
+.adm-gate input {
+  width: 100%;
+  font-family: var(--display);
+  font-size: 15px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  outline: none;
+  margin-bottom: 16px;
+}
+.adm-gate input:focus {
+  border-color: var(--ink);
+}
+.adm-gate button {
+  width: 100%;
+}
+.adm-gate__err {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: #c0271f;
+  margin: 0 0 14px;
+  min-height: 1.2em;
+}
+.adm-gate__hint {
+  margin: 18px 0 0;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--gray-2);
+  line-height: 1.5;
+}
+.adm-top a.logout {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+  cursor: pointer;
+  border-bottom: 1px solid #444;
+  padding-bottom: 3px;
+}
+.adm-top a.logout:hover {
+  border-color: #fff;
+}
