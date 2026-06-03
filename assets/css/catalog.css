@@ -233,3 +233,172 @@ input[type="range"] {
     gap: 12px;
   }
 }
+
+/* ============================================================
+   ФИЛЬТРЫ 2.0 — поиск, активные чипы, скелетоны, мобильный drawer
+   ============================================================ */
+
+/* инлайн-поиск в тулбаре */
+.cat-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  padding: 9px 12px;
+  flex: 1;
+  min-width: 180px;
+  max-width: 320px;
+}
+.cat-search:focus-within {
+  border-color: var(--ink);
+}
+.cat-search__ic {
+  display: inline-flex;
+  color: var(--gray-1);
+}
+.cat-search__ic svg {
+  width: 16px;
+  height: 16px;
+}
+.cat-search input {
+  border: none;
+  outline: none;
+  background: none;
+  font-family: var(--display);
+  font-size: 14px;
+  width: 100%;
+  color: var(--ink);
+}
+
+/* активные фильтры-чипы */
+.active-filters {
+  display: none;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+.active-filters.on {
+  display: flex;
+}
+.afilter {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  padding: 8px 12px;
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: #fff;
+  transition: 0.15s;
+}
+.afilter .x {
+  font-size: 15px;
+  line-height: 1;
+}
+.afilter:hover {
+  background: var(--paper);
+  color: var(--ink);
+}
+.afilter--clear {
+  background: var(--paper);
+  color: var(--ink);
+  border-style: dashed;
+}
+.afilter--clear:hover {
+  background: var(--ink);
+  color: #fff;
+  border-style: solid;
+}
+
+/* скелетоны загрузки */
+.card-skel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.card-skel__media {
+  aspect-ratio: 1 / 1;
+  border: 1px solid var(--line);
+}
+.card-skel__media,
+.card-skel__line {
+  background: linear-gradient(100deg, #f4f3f1 30%, #eceae6 50%, #f4f3f1 70%);
+  background-size: 200% 100%;
+  animation: skel 1.3s ease-in-out infinite;
+}
+.card-skel__line {
+  height: 11px;
+  width: 70%;
+}
+.card-skel__line.short {
+  width: 45%;
+}
+@keyframes skel {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .card-skel__media,
+  .card-skel__line {
+    animation: none;
+  }
+}
+
+/* затемнение под мобильным drawer */
+.filters-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 10, 10, 0.5);
+  z-index: 115;
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.3s;
+}
+.filters-backdrop.on {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* кнопка «Показать N» — только в мобильном drawer */
+.drawer-apply {
+  display: none;
+}
+@media (min-width: 861px) {
+  .filters-backdrop {
+    display: none;
+  }
+}
+@media (max-width: 860px) {
+  /* drawer как боковая панель, а не на весь экран */
+  .filters {
+    inset: 0 auto 0 0;
+    width: min(360px, 88%);
+    padding-bottom: 84px;
+    box-shadow: 0 0 60px rgba(0, 0, 0, 0.25);
+  }
+  .drawer-apply {
+    display: block;
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    margin-top: 12px;
+    padding: 16px;
+    border: none;
+    background: var(--ink);
+    color: #fff;
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+}
