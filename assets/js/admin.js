@@ -132,6 +132,8 @@
     curSizes = p ? (p.sizes || []).map(String) : CAT_DEFAULT_SIZES[p ? p.cat : "sneakers"].slice();
     curStock = new Set(p ? (p.inStock || []).map(String) : []);
     document.getElementById("f_sizes").value = curSizes.join(", ");
+    document.getElementById("f_file").value = "";
+    lockUrlField(false);
     document.getElementById("f_img").value = curImg && !curImg.startsWith("data:") ? curImg : "";
     document.getElementById("deleteBtn").style.display = p ? "inline-flex" : "none";
     paintImg();
@@ -149,8 +151,28 @@
 
   function paintImg() {
     const prev = document.getElementById("imgPrev");
-    prev.innerHTML = curImg ? `<img src="${curImg}" alt="">` : `<span>Нет фото</span>`;
+    prev.innerHTML = curImg
+      ? `<img src="${curImg}" alt="" /><button type="button" class="adm-img__clear" id="imgClear" aria-label="Убрать фото">×</button>`
+      : `<span>Нет фото</span>`;
   }
+  // защита от конфликта «файл + ссылка»: пока фото загружено, поле ссылки заблокировано
+  function lockUrlField(on) {
+    const u = document.getElementById("f_img");
+    u.disabled = on;
+    u.placeholder = on
+      ? "Фото загружено — уберите его, чтобы вставить ссылку"
+      : "…или вставьте ссылку на изображение";
+    if (on) u.value = "";
+  }
+  function clearImg() {
+    curImg = "";
+    document.getElementById("f_file").value = "";
+    lockUrlField(false);
+    paintImg();
+  }
+  document.getElementById("imgPrev").addEventListener("click", (e) => {
+    if (e.target.closest("#imgClear")) clearImg();
+  });
   function paintSizeKind() {
     const cat = document.getElementById("f_cat").value;
     const t = sizeTypeFor(cat);
@@ -200,33 +222,20 @@
       paintImg();
     }
   });
-  /* изображение: загрузка файла → сжатие → dataURL */
-  document.getElementById("f_file").addEventListener("change", (e) => {
+  /* изображение: загрузка файла (в Storage или data URL) */
+  document.getElementById("f_file").addEventListener("change", async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      const img = new Image();
-      img.onload = () => {
-        const max = 900,
-          scale = Math.min(1, max / Math.max(img.width, img.height));
-        const w = Math.round(img.width * scale),
-          h = Math.round(img.height * scale);
-        const cv = document.createElement("canvas");
-        cv.width = w;
-        cv.height = h;
-        const ctx = cv.getContext("2d");
-        ctx.fillStyle = "#fff";
-        ctx.fillRect(0, 0, w, h);
-        ctx.drawImage(img, 0, 0, w, h);
-        curImg = cv.toDataURL("image/jpeg", 0.82);
-        document.getElementById("f_img").value = "";
-        paintImg();
-        SI_toast("Фото загружено");
-      };
-      img.src = reader.result;
-    };
-    reader.readAsDataURL(file);
+    try {
+      SI_toast("Загрузка фото…");
+      curImg = await store.uploadImage(file);
+      lockUrlField(true);
+      paintImg();
+      SI_toast("Фото загружено");
+    } catch (err) {
+      alert("Не удалось загрузить фото: " + err.message);
+      document.getElementById("f_file").value = "";
+    }
   });
 
   /* сохранение */

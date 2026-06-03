@@ -583,3 +583,32 @@ body {
 .adm-top a.logout:hover {
   border-color: #fff;
 }
+
+/* ---------- защита загрузки фото (файл vs ссылка) ---------- */
+.adm-img__prev {
+  position: relative;
+}
+.adm-img__clear {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 24px;
+  height: 24px;
+  border: none;
+  cursor: pointer;
+  background: var(--ink);
+  color: #fff;
+  font-size: 16px;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  transition: 0.15s;
+}
+.adm-img__clear:hover {
+  background: #c0271f;
+}
+.adm-field input:disabled {
+  background: var(--paper-2);
+  color: var(--gray-2);
+  cursor: not-allowed;
+}

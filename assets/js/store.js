@@ -6,6 +6,9 @@
    Два режима, переключаются автоматически:
    • Облако (Supabase) — если в config.js заданы реальные ключи.
      Каталог общий для всех, правки модератора видны сразу.
+     Фото товаров заливаются в Supabase Storage (бакет ниже),
+     а в товар пишется короткая публичная ссылка. Если бакет не
+     создан — мягкий фолбэк: фото хранится как data URL в товаре.
    • Локальный фолбэк — если ключей нет. Каталог берётся из
      data.js и хранится в localStorage этого браузера.
 
@@ -15,6 +18,7 @@
    ============================================================ */
 (function () {
   const KEY = "si_products_v3";
+  const BUCKET = "product-images"; // бакет Supabase Storage для фото товаров
   const cfg = window.SI_CONFIG || {};
 
   // облако активно только при заданных и непустых (не плейсхолдерных) ключах
@@ -34,6 +38,44 @@
 
   function defaults() {
     return JSON.parse(JSON.stringify(window.SI_PRODUCTS || []));
+  }
+
+  /* ---------- работа с изображением ---------- */
+  // ужать картинку через canvas; вернуть Blob (для Storage) или dataURL (локально)
+  function processImage(file, asBlob) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = () => reject(new Error("Не удалось прочитать файл"));
+      reader.onload = () => {
+        const img = new Image();
+        img.onerror = () => reject(new Error("Не удалось открыть изображение"));
+        img.onload = () => {
+          const max = 1200;
+          const scale = Math.min(1, max / Math.max(img.width, img.height));
+          const w = Math.round(img.width * scale);
+          const h = Math.round(img.height * scale);
+          if (!w || !h) return reject(new Error("Пустое изображение"));
+          const cv = document.createElement("canvas");
+          cv.width = w;
+          cv.height = h;
+          const ctx = cv.getContext("2d");
+          ctx.fillStyle = "#fff";
+          ctx.fillRect(0, 0, w, h);
+          ctx.drawImage(img, 0, 0, w, h);
+          if (asBlob) {
+            cv.toBlob(
+              (b) => (b ? resolve(b) : reject(new Error("Не удалось сжать изображение"))),
+              "image/jpeg",
+              0.85,
+            );
+          } else {
+            resolve(cv.toDataURL("image/jpeg", 0.85));
+          }
+        };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
   }
 
   /* ---------- локальный режим ---------- */
@@ -119,6 +161,29 @@
     },
     get(id) {
       return cache.find((p) => p.id === id) || null;
+    },
+
+    /* загрузка фото: в облаке пробуем Storage (вернёт ссылку); если бакета нет
+       или Storage недоступен — мягкий фолбэк на data URL в самом товаре */
+    async uploadImage(file) {
+      if (CLOUD) {
+        try {
+          const blob = await processImage(file, true);
+          const name = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.jpg`;
+          const { error } = await client.storage.from(BUCKET).upload(name, blob, {
+            contentType: "image/jpeg",
+            cacheControl: "31536000",
+            upsert: false,
+          });
+          if (error) throw error;
+          const { data } = client.storage.from(BUCKET).getPublicUrl(name);
+          return data.publicUrl;
+        } catch (e) {
+          console.warn("SI_store: Storage недоступен, сохраняю фото как data URL", e);
+          return processImage(file, false);
+        }
+      }
+      return processImage(file, false);
     },
 
     /* создать или обновить товар */
