@@ -1,17 +1,23 @@
 /* ============================================================
    SNEAKER INTERACTION — конфигурация Supabase
    ------------------------------------------------------------
-   Заполните после создания проекта на supabase.com:
-     Project Settings → API → Project URL и anon public key.
+   Project Settings → API keys:
+     • SUPABASE_URL        — Project URL (только базовый адрес,
+                             без /rest/v1).
+     • SUPABASE_ANON_KEY   — Publishable key (sb_publishable_…).
+                             Это публичный клиентский ключ.
 
-   anon-ключ безопасно держать в коде фронтенда — доступ
-   ограничивается политиками RLS на стороне базы (см. README).
+   НЕ вставляйте сюда Secret key (sb_secret_…) — он серверный
+   и даёт полный доступ в обход прав. В коде фронтенда ему не место.
 
-   Пока значения остаются плейсхолдерами, сайт работает в
-   локальном режиме (каталог из data.js + localStorage), без
-   облака и без входа модератора.
+   Publishable-ключ безопасно держать в коде — доступ к данным
+   ограничивают политики RLS на стороне базы (см. README и
+   supabase-setup.sql).
+
+   Пока SUPABASE_ANON_KEY — плейсхолдер, сайт работает локально
+   (каталог из data.js + localStorage), без облака и без входа.
    ============================================================ */
 window.SI_CONFIG = {
-  SUPABASE_URL: "https://YOUR-PROJECT.supabase.co",
-  SUPABASE_ANON_KEY: "YOUR-ANON-PUBLIC-KEY",
+  SUPABASE_URL: "https://otwfusrhxbqzcizurebm.supabase.co",
+  SUPABASE_ANON_KEY: "sb_publishable_i5UfXODpIPRiE68Q44c3XQ_Vhc3qqIo",
 };
