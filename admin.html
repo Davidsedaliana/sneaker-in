@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Админ-панель — Sneaker Interaction</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="assets/img/favicon-32.png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png" />
+    <meta name="theme-color" content="#0A0A0A" />
+    <link rel="preload" href="assets/fonts/benzin-bold.otf" as="font" type="font/otf" crossorigin />
+    <link rel="stylesheet" href="assets/css/base.css" />
+    <link rel="stylesheet" href="assets/css/admin.css" />
+  </head>
+  <body>
+    <header class="adm-top">
+      <div class="adm-top__in">
+        <img src="assets/img/logo-wordmark-white.png" alt="Sneaker Interaction" />
+        <span class="tag">Админ-панель</span>
+        <div class="adm-top__sp"></div>
+        <a class="view" href="catalog.html" target="_blank" id="viewSite">Открыть витрину ↗</a>
+      </div>
+    </header>
+
+    <main class="adm">
+      <div class="adm-head">
+        <div>
+          <h1>Товары</h1>
+          <p id="subline">—</p>
+        </div>
+        <div class="adm-actions">
+          <button class="adm-btn" id="exportBtn">Экспорт</button>
+          <button class="adm-btn" id="importBtn">Импорт</button>
+          <button class="adm-btn" id="resetBtn">Сбросить</button>
+          <button class="adm-btn adm-btn--primary" id="addBtn">
+            <span id="addIc"></span> Добавить товар
+          </button>
+        </div>
+      </div>
+
+      <div class="adm-note">
+        <span id="noteIc"></span>
+        <span
+          >Все изменения сохраняются <b>в этом браузере</b> и сразу видны на витрине. Чтобы
+          перенести каталог на другое устройство или сайт — нажмите <b>Экспорт</b> и сохраните файл.
+          Кнопка <b>Сбросить</b> вернёт исходный каталог.</span
+        >
+      </div>
+
+      <div class="adm-bar">
+        <div class="adm-search">
+          <span id="searchIc"></span>
+          <input
+            type="search"
+            id="search"
+            placeholder="Поиск по названию, бренду, артикулу…"
+            autocomplete="off"
+          />
+        </div>
+        <div class="adm-filter" id="catFilter">
+          <button data-f="all" aria-pressed="true">Все</button>
+          <button data-f="sneakers">Кроссовки</button>
+          <button data-f="apparel">Одежда</button>
+          <button data-f="accessories">Аксессуары</button>
+          <button data-f="eyewear">Очки</button>
+          <button data-f="collectibles">Коллекционное</button>
+        </div>
+      </div>
+
+      <div class="adm-count" id="count">—</div>
+      <div class="adm-list" id="list"></div>
+    </main>
+
+    <!-- EDIT MODAL -->
+    <div class="adm-modal" id="modal">
+      <div class="adm-modal__bg" data-mclose></div>
+      <div class="adm-modal__card">
+        <div class="adm-modal__h">
+          <b id="modalTitle">Новый товар</b>
+          <button data-mclose aria-label="Закрыть" id="mCloseIc"></button>
+        </div>
+        <form class="adm-form" id="form">
+          <input type="hidden" id="f_id" />
+          <div class="adm-field full">
+            <label>Фото товара</label>
+            <div class="adm-img">
+              <div class="adm-img__prev" id="imgPrev"><span>Нет фото</span></div>
+              <div class="adm-img__ctl">
+                <label class="adm-upload">
+                  Загрузить с устройства
+                  <input type="file" id="f_file" accept="image/*" hidden />
+                </label>
+                <input type="text" id="f_img" placeholder="…или вставьте ссылку на изображение" />
+                <span class="hint"
+                  >Фото автоматически сожмётся до ~900px. Лучше квадратные кадры на белом
+                  фоне.</span
+                >
+              </div>
+            </div>
+          </div>
+          <div class="adm-field">
+            <label>Категория</label>
+            <select id="f_cat">
+              <option value="sneakers">Кроссовки</option>
+              <option value="apparel">Одежда</option>
+              <option value="accessories">Аксессуары</option>
+              <option value="eyewear">Очки</option>
+              <option value="collectibles">Коллекционное</option>
+            </select>
+          </div>
+          <div class="adm-field">
+            <label>Наличие / бейдж</label>
+            <select id="f_badge">
+              <option value="stock">В наличии</option>
+              <option value="hot">Дроп (хит)</option>
+              <option value="order">Под заказ</option>
+            </select>
+          </div>
+          <div class="adm-field">
+            <label>Бренд</label>
+            <input type="text" id="f_brand" placeholder="Nike SB" />
+          </div>
+          <div class="adm-field">
+            <label>Модель / тип</label>
+            <input type="text" id="f_model" placeholder="Dunk Low" />
+          </div>
+          <div class="adm-field full">
+            <label>Название товара</label>
+            <input type="text" id="f_name" placeholder="Parra × Nike SB Dunk Low" />
+          </div>
+          <div class="adm-field">
+            <label>Артикул</label>
+            <input type="text" id="f_sku" placeholder="DH7695-100" />
+          </div>
+          <div class="adm-field">
+            <label>Расцветка</label>
+            <input type="text" id="f_colorway" placeholder="Multicolor" />
+          </div>
+          <div class="adm-field full">
+            <label>Размеры <span id="sizeKind" style="color: var(--gray-2)"></span></label>
+            <input type="text" id="f_sizes" placeholder="40, 41, 42, 43, 44" />
+            <span class="hint"
+              >Перечислите через запятую. Для кроссовок — EU (40, 41…), для одежды — S, M, L,
+              XL.</span
+            >
+          </div>
+          <div class="adm-field full">
+            <label>В наличии — отметьте размеры</label>
+            <div class="adm-chips" id="stockChips"></div>
+            <span class="hint"
+              >Кликайте по размерам, которые сейчас в наличии. Остальные показываются как «под
+              заказ».</span
+            >
+          </div>
+          <div class="adm-form__foot">
+            <button
+              type="button"
+              class="adm-btn adm-mini--del"
+              id="deleteBtn"
+              style="display: none"
+            >
+              Удалить товар
+            </button>
+            <div style="flex: 1"></div>
+            <button type="button" class="adm-btn" data-mclose>Отмена</button>
+            <button type="submit" class="adm-btn adm-btn--primary">Сохранить</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- IMPORT MODAL -->
+    <div class="adm-modal" id="impModal">
+      <div class="adm-modal__bg" data-iclose></div>
+      <div class="adm-modal__card">
+        <div class="adm-modal__h">
+          <b>Импорт каталога</b><button data-iclose id="iCloseIc"></button>
+        </div>
+        <div style="padding: 22px; display: flex; flex-direction: column; gap: 14px">
+          <p
+            style="
+              font-family: var(--mono);
+              font-size: 12px;
+              color: var(--gray-1);
+              line-height: 1.6;
+              margin: 0;
+            "
+          >
+            Вставьте JSON, полученный из «Экспорт». Текущий каталог будет заменён.
+          </p>
+          <textarea
+            id="impText"
+            rows="10"
+            style="
+              font-family: var(--mono);
+              font-size: 12px;
+              padding: 12px;
+              border: 1px solid var(--line);
+              outline: none;
+              width: 100%;
+            "
+          ></textarea>
+          <div style="display: flex; gap: 10px; justify-content: flex-end">
+            <button class="adm-btn" data-iclose>Отмена</button>
+            <button class="adm-btn adm-btn--primary" id="impApply">Загрузить</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="assets/js/data.js"></script>
+    <script src="assets/js/store.js"></script>
+    <script src="assets/js/common.js"></script>
+    <script src="assets/js/admin.js"></script>
+  </body>
+</html>

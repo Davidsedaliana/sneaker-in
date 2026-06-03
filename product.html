@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Товар — Sneaker Interaction</title>
+    <meta
+      name="description"
+      content="Оригинальные кроссовки и одежда с проверкой подлинности. Размеры, наличие и расцветки. Цена по запросу в Telegram. Sneaker Interaction."
+    />
+    <link rel="canonical" href="product.html" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Sneaker Interaction" />
+    <meta property="og:title" content="Товар — Sneaker Interaction" />
+    <meta
+      property="og:description"
+      content="Оригинальные кроссовки и одежда с проверкой подлинности. Размеры, наличие и расцветки. Цена по запросу в Telegram. Sneaker Interaction."
+    />
+    <meta property="og:image" content="assets/img/og-cover.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Товар — Sneaker Interaction" />
+    <meta
+      name="twitter:description"
+      content="Оригинальные кроссовки и одежда с проверкой подлинности. Размеры, наличие и расцветки. Цена по запросу в Telegram. Sneaker Interaction."
+    />
+    <meta name="twitter:image" content="assets/img/og-cover.jpg" />
+    <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="assets/img/favicon-32.png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png" />
+    <meta name="theme-color" content="#0A0A0A" />
+    <link rel="preload" href="assets/fonts/benzin-bold.otf" as="font" type="font/otf" crossorigin />
+    <link rel="stylesheet" href="assets/css/base.css" />
+    <link rel="stylesheet" href="assets/css/product.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#app">Перейти к содержимому</a>
+    <header class="nav">
+      <div class="nav__in">
+        <a class="brand" href="index.html">
+          <img class="brand__logo" src="assets/img/logo-wordmark.png" alt="Sneaker Interaction" />
+        </a>
+        <nav class="nav__links">
+          <a href="catalog.html">Каталог</a>
+          <a href="catalog.html?cat=sneakers">Кроссовки</a>
+          <a href="catalog.html?cat=apparel">Одежда</a>
+          <a href="catalog.html?cat=accessories">Аксессуары</a>
+          <a href="index.html#order">Как заказать</a>
+        </nav>
+        <div class="nav__spacer"></div>
+        <div class="nav__act">
+          <button class="icon-btn" aria-label="Поиск" id="navSearch"></button>
+          <button class="icon-btn nav__burger" aria-label="Меню" id="navBurger"></button>
+        </div>
+      </div>
+    </header>
+
+    <main class="wrap" id="app"><!-- rendered --></main>
+
+    <footer class="foot">
+      <div class="wrap">
+        <div class="foot__top">
+          <div>
+            <div class="foot__logo-wrap">
+              <img
+                class="foot__logo"
+                src="assets/img/logo-wordmark-white.png"
+                alt="Sneaker Interaction"
+              />
+            </div>
+            <p
+              style="
+                color: var(--gray-2);
+                max-width: 34ch;
+                margin-top: 20px;
+                font-size: 14px;
+                line-height: 1.6;
+              "
+            >
+              Магазин кроссовок, одежды и аксессуаров. Москва.
+            </p>
+          </div>
+          <div>
+            <h4>Каталог</h4>
+            <ul>
+              <li><a href="catalog.html?cat=sneakers">Кроссовки</a></li>
+              <li><a href="catalog.html?cat=apparel">Одежда</a></li>
+              <li><a href="catalog.html?cat=accessories">Аксессуары</a></li>
+              <li><a href="catalog.html?cat=eyewear">Очки</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Помощь</h4>
+            <ul>
+              <li><a href="index.html#order">Как заказать</a></li>
+              <li><a href="#sizechart" id="scLink">Размерная сетка</a></li>
+              <li><a href="index.html#order">Доставка и оплата</a></li>
+              <li><a id="tgHelp" target="_blank" rel="noopener">Задать вопрос</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Контакты</h4>
+            <ul>
+              <li><a id="tgFoot" target="_blank" rel="noopener">Telegram</a></li>
+              <li><a href="#">Instagram</a></li>
+              <li><a href="#">hello@sneaker-in.ru</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="foot__bottom">
+          <span>© 2026 Sneaker Interaction</span><span>Оригинал · Проверено · Москва</span
+          ><span>Магазин кроссовок и одежды</span>
+        </div>
+      </div>
+    </footer>
+
+    <!-- size chart modal -->
+    <div class="modal" id="scModal">
+      <div class="modal__bg" data-close></div>
+      <div class="modal__card">
+        <div class="modal__h">
+          <b>Размерная сетка</b><button class="icon-btn" data-close id="scClose"></button>
+        </div>
+        <div class="modal__b">
+          <p
+            style="
+              font-family: var(--mono);
+              font-size: 12px;
+              color: var(--gray-1);
+              margin: 0 0 16px;
+              line-height: 1.6;
+            "
+          >
+            Nike SB Dunk / Air Jordan — измеряйте стопу по стельке. При вопросах напишите нам,
+            поможем с размером.
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>EU</th>
+                <th>US (M)</th>
+                <th>UK</th>
+                <th>CM</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>38</td>
+                <td>6</td>
+                <td>5</td>
+                <td>24.0</td>
+              </tr>
+              <tr>
+                <td>39</td>
+                <td>6.5</td>
+                <td>6</td>
+                <td>24.5</td>
+              </tr>
+              <tr>
+                <td>40</td>
+                <td>7</td>
+                <td>6</td>
+                <td>25.0</td>
+              </tr>
+              <tr>
+                <td>41</td>
+                <td>8</td>
+                <td>7</td>
+                <td>26.0</td>
+              </tr>
+              <tr>
+                <td>42</td>
+                <td>8.5</td>
+                <td>7.5</td>
+                <td>26.5</td>
+              </tr>
+              <tr>
+                <td>43</td>
+                <td>9.5</td>
+                <td>8.5</td>
+                <td>27.5</td>
+              </tr>
+              <tr>
+                <td>44</td>
+                <td>10</td>
+                <td>9</td>
+                <td>28.0</td>
+              </tr>
+              <tr>
+                <td>45</td>
+                <td>11</td>
+                <td>10</td>
+                <td>29.0</td>
+              </tr>
+              <tr>
+                <td>46</td>
+                <td>12</td>
+                <td>11</td>
+                <td>30.0</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <script src="assets/js/data.js"></script>
+    <script src="assets/js/store.js"></script>
+    <script src="assets/js/common.js"></script>
+    <script src="assets/js/product.js"></script>
+  </body>
+</html>

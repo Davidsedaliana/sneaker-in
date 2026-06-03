@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Страница не найдена — Sneaker Interaction</title>
+    <meta name="robots" content="noindex, follow" />
+    <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="assets/img/favicon-32.png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png" />
+    <meta name="theme-color" content="#0A0A0A" />
+    <link rel="preload" href="assets/fonts/benzin-bold.otf" as="font" type="font/otf" crossorigin />
+    <link rel="stylesheet" href="assets/css/base.css" />
+    <link rel="stylesheet" href="assets/css/notfound.css" />
+  </head>
+  <body>
+    <header class="nav">
+      <div class="nav__in">
+        <a class="brand" href="index.html">
+          <img class="brand__logo" src="assets/img/logo-wordmark.png" alt="Sneaker Interaction" />
+        </a>
+        <nav class="nav__links">
+          <a href="catalog.html">Каталог</a>
+          <a href="catalog.html?cat=sneakers">Кроссовки</a>
+          <a href="catalog.html?cat=apparel">Одежда</a>
+          <a href="catalog.html?cat=accessories">Аксессуары</a>
+          <a href="index.html#order">Как заказать</a>
+        </nav>
+        <div class="nav__spacer"></div>
+        <div class="nav__act">
+          <button class="icon-btn" aria-label="Поиск" id="navSearch"></button>
+          <button class="icon-btn nav__burger" aria-label="Меню" id="navBurger"></button>
+        </div>
+      </div>
+    </header>
+
+    <main class="wrap nf">
+      <div class="nf__in">
+        <h1 class="nf__code">4<span class="ac">0</span>4</h1>
+        <p class="nf__title">Такой страницы нет</p>
+        <p class="nf__text">
+          Возможно, товар уже продан или ссылка устарела. Загляните в каталог — там вся актуальная
+          витрина.
+        </p>
+        <div class="nf__cta">
+          <a class="btn btn--lg" href="catalog.html">В каталог</a>
+          <a class="btn btn--ghost btn--lg" href="index.html">На главную</a>
+        </div>
+      </div>
+    </main>
+
+    <footer class="foot">
+      <div class="wrap">
+        <div class="foot__top">
+          <div>
+            <div class="foot__logo-wrap">
+              <img
+                class="foot__logo"
+                src="assets/img/logo-wordmark-white.png"
+                alt="Sneaker Interaction"
+              />
+            </div>
+            <p
+              style="
+                color: var(--gray-2);
+                max-width: 34ch;
+                margin-top: 20px;
+                font-size: 14px;
+                line-height: 1.6;
+              "
+            >
+              Магазин кроссовок, одежды и аксессуаров. Москва.
+            </p>
+          </div>
+          <div>
+            <h4>Каталог</h4>
+            <ul>
+              <li><a href="catalog.html?cat=sneakers">Кроссовки</a></li>
+              <li><a href="catalog.html?cat=apparel">Одежда</a></li>
+              <li><a href="catalog.html?cat=accessories">Аксессуары</a></li>
+              <li><a href="catalog.html?cat=eyewear">Очки</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Контакты</h4>
+            <ul>
+              <li><a id="tgFoot" target="_blank" rel="noopener">Telegram</a></li>
+              <li><a href="#">Instagram</a></li>
+              <li><a href="#">hello@sneaker-in.ru</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="foot__bottom">
+          <span>© 2026 Sneaker Interaction</span><span>Оригинал · Проверено · Москва</span>
+        </div>
+      </div>
+    </footer>
+
+    <script src="assets/js/data.js"></script>
+    <script src="assets/js/common.js"></script>
+    <script src="assets/js/notfound.js"></script>
+  </body>
+</html>

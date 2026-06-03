@@ -1,0 +1,8 @@
+# Sneaker Interaction — robots
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /catalog-print.html
+
+# Замените домен на ваш после публикации (например, https://username.github.io/sneaker-in)
+Sitemap: https://REPLACE-WITH-YOUR-DOMAIN/sitemap.xml

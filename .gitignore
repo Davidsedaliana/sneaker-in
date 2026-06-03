@@ -1,0 +1,18 @@
+# OS / редакторы
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/
+
+# зависимости (если появятся)
+node_modules/
+
+# артефакты дизайн-инструмента (не часть сайта)
+.thumbnail
+shots/
+
+# служебный мусор
+__deltest.txt
+.fuse_hidden*
+*.lock

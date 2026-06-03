@@ -1,0 +1,66 @@
+/* ===================== PRINT ===================== */
+@page {
+  size: A4 portrait;
+  margin: 12mm;
+}
+@media print {
+  html,
+  body {
+    background: #fff;
+  }
+  *,
+  *::before,
+  *::after {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    animation-delay: -99s !important;
+    animation-duration: 0.001s !important;
+    animation-iteration-count: 1 !important;
+    animation-fill-mode: both !important;
+    animation-play-state: running !important;
+    transition-duration: 0s !important;
+  }
+  /* hide interactive chrome */
+  .nav,
+  .toolbar,
+  .filters,
+  .cat-head .count,
+  .si-search,
+  .si-menu,
+  .si-toast {
+    display: none !important;
+  }
+  /* single column layout, full width */
+  .layout {
+    grid-template-columns: 1fr !important;
+    padding-top: 0 !important;
+    display: block !important;
+  }
+  .cat-head {
+    padding-block: 0 14px !important;
+    border: none !important;
+  }
+  /* product grid: 3 across, keep cards intact across pages */
+  .results {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 14px !important;
+  }
+  .card {
+    break-inside: avoid;
+  }
+  .card__media img {
+    transform: none !important;
+    opacity: 1 !important;
+  }
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+  /* print header band */
+  .print-head {
+    display: block !important;
+  }
+}
+.print-head {
+  display: none;
+}
